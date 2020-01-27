@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SW.EfCoreExtensions
 {
-    static class ModelBuilderExtensions
+    public static class ModelBuilderExtensions
     {
         public static void BuildCommonProperties(this ModelBuilder modelBuilder)
         {
