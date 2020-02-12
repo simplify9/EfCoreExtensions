@@ -12,10 +12,6 @@ namespace SW.EfCoreExtensions
 {
     public static class PropertyBuilderExtensions
     {
-        //static readonly ValueConverter<string[], string> _stringArrayConverter = 
-
-
-
         /// <summary>
         /// Stores array as a separator delimited string
         /// </summary>
@@ -60,7 +56,7 @@ namespace SW.EfCoreExtensions
                 : string.Join(separator.ToString(), array),
             str => str == null
                 ? new int[] { }
-                : str.Split(separator).Select(e=> int.Parse(e)).ToArray());
+                : str.Split(separator).Select(e => int.Parse(e)).ToArray());
 
             builder.HasConversion(c);
             return builder;
@@ -68,7 +64,7 @@ namespace SW.EfCoreExtensions
 
         public static PropertyBuilder<string[]> IsSeparatorDelimited(this PropertyBuilder<string[]> builder, char separator = ';')
         {
-            var c =new ValueConverter<string[], string>(
+            var c = new ValueConverter<string[], string>(
             array => array == null || array.Length < 1
                 ? null
                 : string.Join(separator.ToString(), array),
@@ -126,7 +122,7 @@ namespace SW.EfCoreExtensions
                 v => JsonConvert.DeserializeObject<TProperty>(JsonConvert.SerializeObject(v)));
 
             builder.HasConversion(converter);
-            builder.Metadata.SetValueConverter(converter);
+            //builder.Metadata.SetValueConverter(converter);
             builder.Metadata.SetValueComparer(comparer);
 
             return builder;
