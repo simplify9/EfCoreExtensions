@@ -8,7 +8,7 @@ namespace SW.EfCoreExtensions
     {
         public static void SetProperties(this EntityEntry entityEntry, object dto)
         {
-            var props = entityEntry.CurrentValues.Properties.Select(prop => prop.PropertyInfo);
+            var props = entityEntry.CurrentValues.Properties.Where(prop => prop.PropertyInfo != null).Select(prop => prop.PropertyInfo);
 
             foreach (var propInfo in props)
                 if (propInfo.GetSetMethod() != null)
