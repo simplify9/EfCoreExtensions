@@ -11,7 +11,7 @@ namespace SW.EfCoreExtensions
     {
         public static void SetCommonProperties(this ChangeTracker changeTracker, IRequestContext requestContext)
         {
-            //changeTracker.DetectChanges();
+            changeTracker.DetectChanges();
 
             var timestamp = DateTime.UtcNow;
 
