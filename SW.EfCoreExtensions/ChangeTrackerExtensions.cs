@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace SW.EfCoreExtensions
 {
@@ -52,5 +54,23 @@ namespace SW.EfCoreExtensions
             }
         }
 
+
+        async public static Task DispatchDomainEvents(this ChangeTracker changeTracker, IDomainEventDispatcher domainEventDispatcher)
+        {
+            var entitiesWithEvents = changeTracker.Entries<BaseEntity>()
+                .Select(e => e.Entity)
+                .Where(e => e.Events.Any())
+                .ToArray();
+
+            foreach (var entity in entitiesWithEvents)
+            {
+                var events = entity.Events.ToArray();
+                entity.Events.Clear();
+                foreach (var domainEvent in events)
+                {
+                    await domainEventDispatcher.Dispatch(domainEvent);
+                }
+            }
+        }
     }
 }
