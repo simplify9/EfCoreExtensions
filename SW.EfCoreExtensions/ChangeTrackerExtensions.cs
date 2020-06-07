@@ -11,7 +11,7 @@ namespace SW.EfCoreExtensions
 {
     public static class ChangeTrackerExtensions
     {
-        public static void SetCommonProperties(this ChangeTracker changeTracker, RequestContextManager requestContextManager)
+        public static void SetCommonProperties(this ChangeTracker changeTracker, IRequestContext requestContext)
         {
             changeTracker.DetectChanges();
 
@@ -31,7 +31,7 @@ namespace SW.EfCoreExtensions
 
                     if (entry.Entity is IDeletionAudited)
 
-                        entry.Property(nameof(IDeletionAudited.DeletedBy)).CurrentValue = requestContextManager.Current?.GetNameIdentifier();
+                        entry.Property(nameof(IDeletionAudited.DeletedBy)).CurrentValue = requestContext?.GetNameIdentifier();
 
                 }
 
@@ -41,7 +41,7 @@ namespace SW.EfCoreExtensions
 
                 if (entry.Entity is ICreationAudited && entry.State == EntityState.Added)
 
-                    entry.Property(nameof(ICreationAudited.CreatedBy)).CurrentValue = requestContextManager.Current?.GetNameIdentifier();
+                    entry.Property(nameof(ICreationAudited.CreatedBy)).CurrentValue = requestContext?.GetNameIdentifier();
 
                 if (entry.Entity is IHasModificationTime && (entry.State == EntityState.Added || entry.State == EntityState.Modified))
 
@@ -49,7 +49,7 @@ namespace SW.EfCoreExtensions
 
                 if (entry.Entity is IModificationAudited && (entry.State == EntityState.Added || entry.State == EntityState.Modified))
 
-                    entry.Property(nameof(IModificationAudited.ModifiedBy)).CurrentValue = requestContextManager.Current?.GetNameIdentifier();
+                    entry.Property(nameof(IModificationAudited.ModifiedBy)).CurrentValue = requestContext?.GetNameIdentifier();
 
             }
         }
