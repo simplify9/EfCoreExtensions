@@ -11,7 +11,7 @@ namespace SW.EfCoreExtensions
 {
     public static class ChangeTrackerExtensions
     {
-        public static void SetCommonProperties(this ChangeTracker changeTracker, IRequestContext requestContext)
+        public static void SetCommonProperties(this ChangeTracker changeTracker, RequestContext requestContext)
         {
             changeTracker.DetectChanges();
 
