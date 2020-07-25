@@ -52,9 +52,9 @@ namespace SW.EfCoreExtensions
         {
             var c = new ValueConverter<int[], string>(
             array => array == null || array.Length < 1
-                ? null
+                ? string.Empty
                 : string.Join(separator.ToString(), array),
-            str => str == null
+            str => string.IsNullOrWhiteSpace(str)
                 ? new int[] { }
                 : str.Split(separator).Select(e => int.Parse(e)).ToArray());
 
@@ -66,9 +66,9 @@ namespace SW.EfCoreExtensions
         {
             var c = new ValueConverter<string[], string>(
             array => array == null || array.Length < 1
-                ? null
+                ? string.Empty
                 : string.Join(separator.ToString(), array),
-            str => str == null
+            str => string.IsNullOrWhiteSpace(str)
                 ? new string[] { }
                 : str.Split(separator));
 
@@ -90,25 +90,7 @@ namespace SW.EfCoreExtensions
             return builder;
         }
 
-        /// <summary>
-        /// Stores value as a JSON serialized string
-        /// </summary>
-        /// <typeparam name="TProperty"></typeparam>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        //public static PropertyBuilder<TProperty> StoreAsJson<TProperty>(this PropertyBuilder<TProperty> builder)
-        //    where TProperty : class
-        //{
-        //    builder.HasConversion(new ValueConverter<TProperty, string>(
-        //        obj => obj == null
-        //            ? null
-        //            : JsonConvert.SerializeObject(obj),
-        //        str => str == null
-        //            ? null
-        //            : JsonConvert.DeserializeObject<TProperty>(str)));
 
-        //    return builder;
-        //}
 
         public static PropertyBuilder<TProperty> StoreAsJson<TProperty>(this PropertyBuilder<TProperty> builder)
         {
