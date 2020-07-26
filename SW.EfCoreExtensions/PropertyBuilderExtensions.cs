@@ -56,7 +56,7 @@ namespace SW.EfCoreExtensions
                 : string.Join(separator.ToString(), array),
             str => string.IsNullOrWhiteSpace(str)
                 ? new int[] { }
-                : str.Split(separator).Select(e => int.Parse(e)).ToArray());
+                : str.Split(separator, StringSplitOptions.RemoveEmptyEntries).Select(e => int.Parse(e)).ToArray());
 
             builder.HasConversion(c);
             return builder;
@@ -70,7 +70,7 @@ namespace SW.EfCoreExtensions
                 : string.Join(separator.ToString(), array),
             str => string.IsNullOrWhiteSpace(str)
                 ? new string[] { }
-                : str.Split(separator));
+                : str.Split(separator, StringSplitOptions.RemoveEmptyEntries));
 
             builder.HasConversion(c);
             return builder;

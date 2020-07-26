@@ -77,6 +77,31 @@ namespace SW.EfCoreExtensions
             }
         }
 
+        public static void AddSequence<T>(this ModelBuilder modelBuilder)
+        {
+            if (modelBuilder.Model.FindEntityType(typeof(Sequence)) == null)
+                modelBuilder.BuildSequenceTable();
+
+            modelBuilder.Entity<Sequence>(b =>
+            {
+                b.HasData(new Sequence
+                {
+                    Entity = typeof(T).Name,
+                    Value = 1,
+                });
+            });
+
+        }
+        private static void BuildSequenceTable(this ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Sequence>(b =>
+            {
+                b.ToTable("Sequences");
+                b.HasKey(p => p.Entity);
+                b.Property(p => p.Entity).HasMaxLength(50);
+            });
+        }
+
         private static LambdaExpression ConvertFilterExpression<TInterface>(
                 Expression<Func<TInterface, bool>> filterExpression,
                 Type entityType)
