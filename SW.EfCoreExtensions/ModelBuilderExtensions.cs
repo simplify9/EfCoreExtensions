@@ -11,7 +11,12 @@ namespace SW.EfCoreExtensions
 {
     public static class ModelBuilderExtensions
     {
-        public static void BuildCommonProperties(this ModelBuilder modelBuilder)
+
+        public static ModelBuilder BuildCommonProperties(this ModelBuilder modelBuilder) 
+        {
+            return BuildCommonProperties(modelBuilder, null);
+        }
+        public static ModelBuilder BuildCommonProperties(this ModelBuilder modelBuilder, Type tenantEntity) 
         {
             foreach (var mutableEntityType in modelBuilder.Model.GetEntityTypes())
             {
@@ -41,7 +46,7 @@ namespace SW.EfCoreExtensions
                 if (typeof(IHasCreationTime).IsAssignableFrom(type))
                     modelBuilder.Entity(type, b =>
                     {
-                        
+
                     });
 
                 if (typeof(ICreationAudited).IsAssignableFrom(type))
@@ -53,7 +58,7 @@ namespace SW.EfCoreExtensions
                 if (typeof(IHasModificationTime).IsAssignableFrom(type))
                     modelBuilder.Entity(type, b =>
                     {
-                        
+
                     });
 
                 if (typeof(IModificationAudited).IsAssignableFrom(type))
@@ -74,7 +79,21 @@ namespace SW.EfCoreExtensions
                         b.Property<string>(nameof(IDeletionAudited.DeletedBy)).IsCode(30, false, false);
                     });
 
+                if (tenantEntity != null && typeof(IHasTenant).IsAssignableFrom(type))
+                    modelBuilder.Entity(type, b =>
+                    {
+                        b.HasOne(tenantEntity).WithMany().HasForeignKey("TenantId").OnDelete(DeleteBehavior.Restrict);
+                    });
+
+                if (tenantEntity != null && typeof(IHasOptionalTenant).IsAssignableFrom(type))
+                    modelBuilder.Entity(type, b =>
+                    {
+                        b.HasOne(tenantEntity).WithMany().HasForeignKey("TenantId").IsRequired(false).OnDelete(DeleteBehavior.Restrict);
+                    });
+
             }
+
+            return modelBuilder;
         }
 
         public static void AddSequence<T>(this ModelBuilder modelBuilder)
