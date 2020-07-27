@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SW.EfCoreExtensions
 {
-    static class EntityTypeBuilderExtensions
+    public static class EntityTypeBuilderExtensions
     {
         public static EntityTypeBuilder<T> HasQueryFilter<T>(this EntityTypeBuilder<T> builder, QueryFilter queryFilter, RequestContext requestContext = null) where T : class
         {
