@@ -52,7 +52,7 @@ namespace SW.EfCoreExtensions
                 if (typeof(ICreationAudited).IsAssignableFrom(type))
                     modelBuilder.Entity(type, b =>
                     {
-                        b.Property<string>(nameof(ICreationAudited.CreatedBy)).IsCode(30, false, false);
+                        b.Property<string>(nameof(ICreationAudited.CreatedBy)).IsCode(100, false, false);
                     });
 
                 if (typeof(IHasModificationTime).IsAssignableFrom(type))
@@ -64,7 +64,7 @@ namespace SW.EfCoreExtensions
                 if (typeof(IModificationAudited).IsAssignableFrom(type))
                     modelBuilder.Entity(type, b =>
                     {
-                        b.Property<string>(nameof(IModificationAudited.ModifiedBy)).IsCode(30, false, false);
+                        b.Property<string>(nameof(IModificationAudited.ModifiedBy)).IsCode(100, false, false);
                     });
 
                 if (typeof(IHasDeletionTime).IsAssignableFrom(type))
@@ -76,7 +76,7 @@ namespace SW.EfCoreExtensions
                 if (typeof(IDeletionAudited).IsAssignableFrom(type))
                     modelBuilder.Entity(type, b =>
                     {
-                        b.Property<string>(nameof(IDeletionAudited.DeletedBy)).IsCode(30, false, false);
+                        b.Property<string>(nameof(IDeletionAudited.DeletedBy)).IsCode(100, false, false);
                     });
 
                 if (tenantEntity != null && typeof(IHasTenant).IsAssignableFrom(type))
