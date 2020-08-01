@@ -5,7 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 using SW.PrimitiveTypes;
 
-namespace SW.Searchy.UnitTests
+namespace SW.EfCoreExtensions.UnitTests
 {
     [TestClass]
     public class UnitTest

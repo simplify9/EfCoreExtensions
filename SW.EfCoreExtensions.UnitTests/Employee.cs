@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static Bogus.DataSets.Name;
 
-namespace SW.Searchy.UnitTests 
+namespace SW.EfCoreExtensions.UnitTests
 {
     public class Employee
     {

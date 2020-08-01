@@ -1,5 +1,4 @@
-﻿using SW.ObjectConversion;
-using SW.PrimitiveTypes;
+﻿using SW.PrimitiveTypes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -139,19 +138,11 @@ namespace SW.EfCoreExtensions
             return rangeValues;
         }
 
-        //static object ConvertValueToType(object value, Type type)
-        //{
-        //    if (value is null) return null;
-
-        //    var nakedType = Nullable.GetUnderlyingType(type);
-        //    if (nakedType != null)
-        //    {
-        //        type = nakedType;
-        //        if (string.IsNullOrEmpty(value.ToString())) return null;
-        //    }
-
-        //    return Convert.ChangeType(value, type);
-        //}
+        private class RangeValues
+        {
+            public object Lower { get; set; }
+            public object Upper { get; set; }
+        }
 
     }
 }
