@@ -2,14 +2,12 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace SW.EfCoreExtensions
 {
-    public class SequenceValueGenerator : ValueGenerator
+    internal class SequenceValueGenerator : ValueGenerator
     {
         public override bool GeneratesTemporaryValues => false;
 

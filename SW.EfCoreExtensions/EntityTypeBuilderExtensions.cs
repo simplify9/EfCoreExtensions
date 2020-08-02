@@ -1,24 +1,59 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SW.PrimitiveTypes;
+using Microsoft.EntityFrameworkCore.Query;
+using System;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace SW.EfCoreExtensions
 {
     public static class EntityTypeBuilderExtensions
     {
-        public static EntityTypeBuilder<T> HasQueryFilterForSoftDeletion<T>(this EntityTypeBuilder<T> builder) where T : class, ISoftDelete
-            => builder.HasQueryFilter(item => !EF.Property<bool>(item, nameof(ISoftDelete.Deleted)));
 
-        public static EntityTypeBuilder<T> HasQueryFilterForTenancy<T>(this EntityTypeBuilder<T> builder, RequestContext requestContext) where T : class, IHasTenant
-            => builder.HasQueryFilter(item => EF.Property<int>(item, nameof(IHasTenant.TenantId)) == requestContext.GetTenantId().Value);
+        public static EntityTypeBuilder AddQueryFilter(this EntityTypeBuilder entityTypeBuilder, Expression<Func<object, bool>> expression)
+        {
+            return AddQueryFilter<object>(entityTypeBuilder, expression);
+        }
 
-        public static EntityTypeBuilder<T> HasQueryFilterForOptionalTenancy<T>(this EntityTypeBuilder<T> builder, RequestContext requestContext) where T : class, IHasOptionalTenant
-            => builder.HasQueryFilter(item => EF.Property<int?>(item, nameof(IHasOptionalTenant.TenantId)) == requestContext.GetTenantId() || EF.Property<int?>(item, nameof(IHasOptionalTenant.TenantId)) == null);
+        public static EntityTypeBuilder AddQueryFilter<TFilter>(this EntityTypeBuilder entityTypeBuilder, Expression<Func<TFilter, bool>> expression)
+        {
+            var parameterType = Expression.Parameter(entityTypeBuilder.Metadata.ClrType);
+            var expressionFilter = ReplacingExpressionVisitor.Replace(
+                expression.Parameters.Single(), parameterType, expression.Body);
+            
+            var currentQueryFilter = entityTypeBuilder.Metadata.GetQueryFilter();
+            if (currentQueryFilter != null)
+            {
+                var currentExpressionFilter = ReplacingExpressionVisitor.Replace(
+                    currentQueryFilter.Parameters.Single(), parameterType, currentQueryFilter.Body);
+                expressionFilter = Expression.AndAlso(currentExpressionFilter, expressionFilter);
+            }
 
-        public static EntityTypeBuilder<T> HasQueryFilterForSoftDeletionAndTenancy<T>(this EntityTypeBuilder<T> builder, RequestContext requestContext) where T : class, ISoftDelete, IHasTenant
-            => builder.HasQueryFilter(item => !EF.Property<bool>(item, nameof(ISoftDelete.Deleted)) && EF.Property<int>(item, nameof(IHasTenant.TenantId)) == requestContext.GetTenantId().Value);
+            var lambdaExpression = Expression.Lambda(expressionFilter, parameterType);
+            entityTypeBuilder.HasQueryFilter(lambdaExpression);
 
-        public static EntityTypeBuilder<T> HasQueryFilterForSoftDeletionAndOptionalTenancy<T>(this EntityTypeBuilder<T> builder, RequestContext requestContext) where T : class, ISoftDelete, IHasOptionalTenant
-            => builder.HasQueryFilter(item => !EF.Property<bool>(item, nameof(ISoftDelete.Deleted)) && (EF.Property<int?>(item, nameof(IHasOptionalTenant.TenantId)) == requestContext.GetTenantId() || EF.Property<int?>(item, nameof(IHasOptionalTenant.TenantId)) == null));
+            return entityTypeBuilder;
+        }
+
+        //public static EntityTypeBuilder AddQueryFilter<TEntity>(this EntityTypeBuilder entityTypeBuilder, Expression<Func<TEntity, bool>> expression) where TEntity : class
+        //{
+        //    var parameterType = Expression.Parameter(entityTypeBuilder.Metadata.ClrType);
+        //    var expressionFilter = ReplacingExpressionVisitor.Replace(
+        //        expression.Parameters.Single(), parameterType, expression.Body);
+
+        //    var currentQueryFilter = entityTypeBuilder.Metadata.GetQueryFilter();
+        //    if (currentQueryFilter != null)
+        //    {
+        //        var currentExpressionFilter = ReplacingExpressionVisitor.Replace(
+        //            currentQueryFilter.Parameters.Single(), parameterType, currentQueryFilter.Body);
+        //        expressionFilter = Expression.AndAlso(currentExpressionFilter, expressionFilter);
+        //    }
+
+        //    var lambdaExpression = Expression.Lambda(expressionFilter, parameterType);
+        //    entityTypeBuilder.HasQueryFilter(lambdaExpression);
+
+        //    return entityTypeBuilder;
+        //}
+
     }
 }

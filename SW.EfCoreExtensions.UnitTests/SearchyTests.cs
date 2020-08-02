@@ -8,7 +8,7 @@ using SW.PrimitiveTypes;
 namespace SW.EfCoreExtensions.UnitTests
 {
     [TestClass]
-    public class UnitTest
+    public class SearchyTests
     {
 
         //[ClassInitialize]

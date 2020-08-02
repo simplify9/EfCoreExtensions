@@ -12,17 +12,14 @@ namespace SW.EfCoreExtensions
 {
     public static class ChangeTrackerExtensions
     {
-        public static void SetCommonProperties(this ChangeTracker changeTracker, RequestContext requestContext)
+        public static void ApplyAuditValues(this ChangeTracker changeTracker, string userId)
         {
             changeTracker.DetectChanges();
 
             var timestamp = DateTime.UtcNow;
-            var nameIdentifier = requestContext?.GetNameIdentifier();
-            var tenantId = requestContext?.GetTenantId();
 
             foreach (var entry in changeTracker.Entries())
             {
-
                 if (entry.Entity is ISoftDelete && entry.State == EntityState.Deleted)
                 {
                     entry.State = EntityState.Modified;
@@ -32,20 +29,34 @@ namespace SW.EfCoreExtensions
                         TrySetProperty(entry.Entity, nameof(IHasDeletionTime.DeletedOn), timestamp);
 
                     if (entry.Entity is IDeletionAudited)
-                        TrySetProperty(entry.Entity, nameof(IDeletionAudited.DeletedBy), nameIdentifier);
+                        TrySetProperty(entry.Entity, nameof(IDeletionAudited.DeletedBy), userId);
                 }
 
                 if (entry.Entity is IHasCreationTime && entry.State == EntityState.Added)
                     TrySetProperty(entry.Entity, nameof(IHasCreationTime.CreatedOn), timestamp);
 
                 if (entry.Entity is ICreationAudited && entry.State == EntityState.Added)
-                    TrySetProperty(entry.Entity, nameof(ICreationAudited.CreatedBy), nameIdentifier);
+                    TrySetProperty(entry.Entity, nameof(ICreationAudited.CreatedBy), userId);
 
                 if (entry.Entity is IHasModificationTime && (entry.State == EntityState.Added || entry.State == EntityState.Modified))
                     TrySetProperty(entry.Entity, nameof(IHasModificationTime.ModifiedOn), timestamp);
 
                 if (entry.Entity is IModificationAudited && (entry.State == EntityState.Added || entry.State == EntityState.Modified))
-                    TrySetProperty(entry.Entity, nameof(IModificationAudited.ModifiedBy), nameIdentifier);
+                    TrySetProperty(entry.Entity, nameof(IModificationAudited.ModifiedBy), userId);
+            }
+        }
+
+        public static void ApplyTenantValues(this ChangeTracker changeTracker, int? tenantId)
+        {
+            changeTracker.DetectChanges();
+
+            foreach (var entry in changeTracker.Entries())
+            {
+                if (entry.Entity is IHasTenant && entry.State == EntityState.Added && tenantId.HasValue)
+                    TrySetProperty(entry.Entity, nameof(IHasTenant.TenantId), tenantId.Value);
+
+                if (entry.Entity is IHasOptionalTenant && entry.State == EntityState.Added && tenantId.HasValue)
+                    TrySetProperty(entry.Entity, nameof(IHasOptionalTenant.TenantId), tenantId.Value);
             }
         }
 
