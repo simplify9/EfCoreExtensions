@@ -101,6 +101,7 @@ namespace SW.EfCoreExtensions.UnitTests
                 b.HasSoftDeletionQueryFilter();
                 b.HasTenantQueryFilter(requestContext);
                 b.HasTenantForeignKey<Tenant>();
+                b.HasSequenceGenerator<int>(nameof(Ticket.Number));
             });
 
             modelBuilder.EntityFeatures<MetaData>(b =>

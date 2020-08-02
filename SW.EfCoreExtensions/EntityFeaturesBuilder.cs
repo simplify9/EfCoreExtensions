@@ -135,13 +135,6 @@ namespace SW.EfCoreExtensions
             return this;
         }
 
-        //public EntityFeaturesBuilder HasModificationAudit(RequestContext requestContext, byte userIdLength = 100)
-        //{
-
-        //    return this;
-
-        //}
-
         private void BuildSequenceTable()
         {
             modelBuilder.Entity<Sequence>(b =>

@@ -38,7 +38,7 @@ namespace SW.EfCoreExtensions.UnitTests
             using var scope = server.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
             var countTenants = await dbContext.Set<Tenant>().CountAsync();
-
+            
             Assert.AreEqual(2, countTenants);
         }
 
@@ -60,6 +60,23 @@ namespace SW.EfCoreExtensions.UnitTests
             var countTickets = await dbContext.Set<MetaData>().CountAsync();
 
             Assert.AreEqual(2, countTickets);
+        }
+
+        [TestMethod]
+        async public Task TestSequenceGenerator()
+        {
+            using var scope = server.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetRequiredService<TestDbContext>();
+
+            var ticket = new Ticket();
+            await dbContext.AddAsync(ticket);
+
+            Assert.AreEqual(1, ticket.Number);
+
+            var ticket2 = new Ticket();
+            await dbContext.AddAsync(ticket2);
+
+            Assert.AreEqual(2, ticket2.Number);
         }
 
 
