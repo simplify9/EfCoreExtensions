@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -18,56 +19,38 @@ namespace SW.EfCoreExtensions
         public CommonPropertiesBuilder(ModelBuilder modelBuilder)
         {
             this.modelBuilder = modelBuilder;
-            entityTypes = modelBuilder.Model.GetEntityTypes();
+            entityTypes = modelBuilder.Model.GetEntityTypes().Where(e => !e.IsOwned()).ToList();
         }
 
         public CommonPropertiesBuilder HasAudit(byte userIdLength = 100)
         {
             foreach (var mutableEntityType in entityTypes)
-            {
-                modelBuilder.Entity(mutableEntityType.ClrType, b =>
-                {
-                    b.HasAudit(userIdLength);
-                });
-            }
+                modelBuilder.Entity(mutableEntityType.ClrType, b => b.HasAudit(userIdLength));
 
             return this;
-
         }
 
         public CommonPropertiesBuilder HasSoftDeletionQueryFilter()
         {
             foreach (var mutableEntityType in entityTypes)
-            {
-                modelBuilder.Entity(mutableEntityType.ClrType, b =>
-                {
-                    b.HasSoftDeletionQueryFilter();
-                });
-            }
+                modelBuilder.Entity(mutableEntityType.ClrType, b => b.HasSoftDeletionQueryFilter());
+            
             return this;
         }
 
         public CommonPropertiesBuilder HasTenantForeignKey<TTenant>() where TTenant : class
         {
             foreach (var mutableEntityType in entityTypes)
-            {
-                modelBuilder.Entity(mutableEntityType.ClrType, b =>
-                {
-                    b.HasTenantForeignKey<TTenant>();
-                });
-            }
+                modelBuilder.Entity(mutableEntityType.ClrType, b => b.HasTenantForeignKey<TTenant>());
+            
             return this;
         }
 
         public CommonPropertiesBuilder HasTenantQueryFilter(Expression<Func<int?>> tenantIdExpression)
         {
             foreach (var mutableEntityType in entityTypes)
-            {
-                modelBuilder.Entity(mutableEntityType.ClrType, b =>
-                {
-                    b.HasTenantQueryFilter(tenantIdExpression);
-                });
-            }
+                modelBuilder.Entity(mutableEntityType.ClrType, b => b.HasTenantQueryFilter(tenantIdExpression));
+            
             return this;
         }
 
