@@ -11,17 +11,17 @@ namespace SW.EfCoreExtensions
 {
     public static class ModelBuilderExtensions
     {
-        public static ModelBuilder EntityFeatures<TEntity>(this ModelBuilder modelBuilder, Action<EntityFeaturesBuilder<TEntity>> builder) where TEntity : class
-        {
-            var entityFeaturesBuilder = new EntityFeaturesBuilder<TEntity>(modelBuilder);
-            builder.Invoke(entityFeaturesBuilder);
-            return modelBuilder;
-        }
+        //public static ModelBuilder EntityFeatures<TEntity>(this ModelBuilder modelBuilder, Action<EntityFeaturesBuilder<TEntity>> builder) where TEntity : class
+        //{
+        //    var entityFeaturesBuilder = new EntityFeaturesBuilder<TEntity>(modelBuilder);
+        //    builder.Invoke(entityFeaturesBuilder);
+        //    return modelBuilder;
+        //}
 
-        public static ModelBuilder CommonFeatures(this ModelBuilder modelBuilder, Action<CommonFeaturesBuilder> builder) 
+        public static ModelBuilder CommonProperties(this ModelBuilder modelBuilder, Action<CommonPropertiesBuilder> builder) 
         {
-            var entityFeaturesBuilder = new CommonFeaturesBuilder(modelBuilder);
-            builder.Invoke(entityFeaturesBuilder);
+            var commonPropertiesBuilder = new CommonPropertiesBuilder(modelBuilder);
+            builder.Invoke(commonPropertiesBuilder);
             return modelBuilder;
         }
     }

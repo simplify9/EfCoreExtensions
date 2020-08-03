@@ -25,6 +25,7 @@ namespace SW.EfCoreExtensions.UnitTests
             modelBuilder.Entity<Tenant>(b =>
             {
                 b.ToTable("Tenants");
+                b.HasSoftDeletionQueryFilter();
                 b.HasData(new
                 {
                     Id = 1,
@@ -46,6 +47,12 @@ namespace SW.EfCoreExtensions.UnitTests
             modelBuilder.Entity<Ticket>(b =>
             {
                 b.ToTable("Tickets");
+                b.Property(p => p.Number).HasSequenceGenerator(modelBuilder);
+                b.HasSoftDeletionQueryFilter();
+                b.HasTenantQueryFilter(() => requestContext.GetTenantId());
+                //b.HasTenantQueryFilter(requestContext);
+                b.HasTenantForeignKey<Tenant>();
+
                 b.HasData(new
                 {
                     Id = 1,
@@ -70,6 +77,9 @@ namespace SW.EfCoreExtensions.UnitTests
             modelBuilder.Entity<MetaData>(b =>
             {
                 b.ToTable("Metadata");
+                b.HasSoftDeletionQueryFilter();
+                b.HasTenantQueryFilter(() => requestContext.GetTenantId());
+                b.HasTenantForeignKey<Tenant>();
                 b.HasData(new
                 {
                     Id = 1,
@@ -89,29 +99,6 @@ namespace SW.EfCoreExtensions.UnitTests
                     TenantId = 2,
                 });
             });
-
-
-            modelBuilder.EntityFeatures<Tenant>(b =>
-            {
-                b.HasSoftDeletionQueryFilter();
-            });
-
-            modelBuilder.EntityFeatures<Ticket>(b =>
-            {
-                b.HasSoftDeletionQueryFilter();
-                b.HasTenantQueryFilter(requestContext);
-                b.HasTenantForeignKey<Tenant>();
-                b.HasSequenceGenerator<int>(nameof(Ticket.Number));
-            });
-
-            modelBuilder.EntityFeatures<MetaData>(b =>
-            {
-                b.HasSoftDeletionQueryFilter();
-                b.HasTenantQueryFilter(requestContext);
-                b.HasTenantForeignKey<Tenant>();
-            });
-
-
         }
     }
 }

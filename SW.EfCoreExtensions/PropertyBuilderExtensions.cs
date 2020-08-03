@@ -90,8 +90,6 @@ namespace SW.EfCoreExtensions
             return builder;
         }
 
-
-
         public static PropertyBuilder<TProperty> StoreAsJson<TProperty>(this PropertyBuilder<TProperty> builder)
         {
             ValueConverter<TProperty, String> converter = new ValueConverter<TProperty, String>(
@@ -108,6 +106,35 @@ namespace SW.EfCoreExtensions
             builder.Metadata.SetValueComparer(comparer);
 
             return builder;
+        }
+
+        public static PropertyBuilder<TProperty> HasSequenceGenerator<TProperty>(this PropertyBuilder<TProperty> builder, ModelBuilder modelBuilder, int seed = 1, int increment = 1)
+        {
+            builder.ValueGeneratedOnAdd().HasValueGenerator<SequenceValueGenerator>();
+            
+            if (modelBuilder.Model.FindEntityType(typeof(Sequence)) == null)
+                BuildSequenceTable(modelBuilder);
+
+            modelBuilder.Entity<Sequence>(b =>
+            {
+                b.HasData(new Sequence
+                {
+                    Entity = builder.Metadata.DeclaringEntityType.Name,
+                    Value = 1,
+                });
+            });
+
+            return builder;
+        }
+
+        private static void BuildSequenceTable(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Sequence>(b =>
+            {
+                b.ToTable("Sequences");
+                b.HasKey(p => p.Entity);
+                b.Property(p => p.Entity).HasMaxLength(50);
+            });
         }
     }
 }

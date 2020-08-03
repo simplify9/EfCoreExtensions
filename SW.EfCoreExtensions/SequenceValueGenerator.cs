@@ -23,12 +23,14 @@ namespace SW.EfCoreExtensions
                 case RelationalDbType.MySql:
                     command.CommandText = $"UPDATE Sequences SET Value=LAST_INSERT_ID(Value) + 1 WHERE Entity = '{sequenceName}';SELECT LAST_INSERT_ID();";
                     break;
-                case RelationalDbType.MsSql:
+
                 case RelationalDbType.Sqlite:
                     command.CommandText = $"UPDATE Sequences SET Value=Value+1 WHERE Entity='{sequenceName}'; SELECT Value-1 FROM Sequences WHERE Entity='{sequenceName}';";
                     break;
+
                 case RelationalDbType.Postgre:
                 case RelationalDbType.Oracle:
+                case RelationalDbType.MsSql:
                 default:
                     throw new NotImplementedException();
             }

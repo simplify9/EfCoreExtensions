@@ -9,18 +9,18 @@ using System.Text;
 
 namespace SW.EfCoreExtensions
 {
-    public class CommonFeaturesBuilder
+    public class CommonPropertiesBuilder
     {
         private readonly ModelBuilder modelBuilder;
         private readonly IEnumerable<IMutableEntityType> entityTypes;
 
-        public CommonFeaturesBuilder(ModelBuilder modelBuilder)
+        public CommonPropertiesBuilder(ModelBuilder modelBuilder)
         {
             this.modelBuilder = modelBuilder;
             entityTypes = modelBuilder.Model.GetEntityTypes();
         }
 
-        public CommonFeaturesBuilder HasAuditFeatures(byte userIdLength = 100)
+        public CommonPropertiesBuilder HasAuditFeatures(byte userIdLength = 100)
         {
             foreach (var mutableEntityType in entityTypes)
             {
@@ -49,12 +49,12 @@ namespace SW.EfCoreExtensions
 
         }
 
-        public CommonFeaturesBuilder HasSoftDeletionQueryFilter()
+        public CommonPropertiesBuilder HasSoftDeletionQueryFilter()
         {
             return this;
         }
 
-        public CommonFeaturesBuilder HasTenantForeignKey<TTenant>() where TTenant : class
+        public CommonPropertiesBuilder HasTenantForeignKey<TTenant>() where TTenant : class
         {
             foreach (var mutableEntityType in entityTypes)
             {
@@ -63,7 +63,7 @@ namespace SW.EfCoreExtensions
             return this;
         }
 
-        public CommonFeaturesBuilder HasTenantQueryFilter(RequestContext requestContext)
+        public CommonPropertiesBuilder HasTenantQueryFilter(RequestContext requestContext)
         {
             return this;
         }
