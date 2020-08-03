@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Newtonsoft.Json;
 using System;
@@ -108,33 +110,56 @@ namespace SW.EfCoreExtensions
             return builder;
         }
 
-        public static PropertyBuilder<TProperty> HasSequenceGenerator<TProperty>(this PropertyBuilder<TProperty> builder, ModelBuilder modelBuilder, int seed = 1, int increment = 1)
+        public static PropertyBuilder<TProperty> HasSequenceGenerator<TProperty>(this PropertyBuilder<TProperty> builder, int seed = 1, int increment = 1)
         {
             builder.ValueGeneratedOnAdd().HasValueGenerator<SequenceValueGenerator>();
-            
-            if (modelBuilder.Model.FindEntityType(typeof(Sequence)) == null)
-                BuildSequenceTable(modelBuilder);
 
-            modelBuilder.Entity<Sequence>(b =>
+            var sequenceEntity = builder.Metadata.DeclaringEntityType.Model.FindEntityType(typeof(Sequence));
+
+            if (sequenceEntity == null)
+                sequenceEntity = BuildSequenceTable(builder.Metadata.DeclaringEntityType.Model);
+
+            //var mutableEntityType = builder.Metadata.DeclaringEntityType.Model.FindEntityType(typeof(Sequence));
+
+            sequenceEntity.AddData(new
             {
-                b.HasData(new Sequence
-                {
-                    Entity = builder.Metadata.DeclaringEntityType.Name,
-                    Value = 1,
-                });
+                Entity = builder.Metadata.DeclaringEntityType.ClrType.Name,
+                Value = 1,
             });
+
+            //modelBuilder.Entity<Sequence>(b =>
+            //{
+            //    b.HasData(new Sequence
+            //    {
+            //        Entity = builder.Metadata.DeclaringEntityType.Model.fin.ClrType.Name,
+            //        Value = 1,
+            //    });
+            //});
 
             return builder;
         }
 
-        private static void BuildSequenceTable(ModelBuilder modelBuilder)
+        private static IMutableEntityType BuildSequenceTable(IMutableModel model)
         {
-            modelBuilder.Entity<Sequence>(b =>
-            {
-                b.ToTable("Sequences");
-                b.HasKey(p => p.Entity);
-                b.Property(p => p.Entity).HasMaxLength(50);
-            });
+            var mutableEntityType = model.AddEntityType(typeof(Sequence));
+
+            mutableEntityType.SetTableName("Sequences");
+            var keyProp = mutableEntityType.FindProperty("Entity");
+            keyProp.SetMaxLength(100);
+            keyProp.SetIsUnicode(false);
+            keyProp.IsNullable = false;  
+            mutableEntityType.SetPrimaryKey(keyProp);
+
+            return mutableEntityType;
+
+            //var keyProp = mutableEntityType.AddProperty("Entity"); 
+            //mutableEntityType.AddData()
+
+            //{
+            //    b.ToTable("Sequences");
+            //    b.HasKey(p => p.Entity);
+            //    b.Property(p => p.Entity).HasMaxLength(50);
+            //});
         }
     }
 }

@@ -16,8 +16,6 @@ namespace SW.EfCoreExtensions.UnitTests
             this.requestContext = requestContext;
         }
 
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -25,7 +23,6 @@ namespace SW.EfCoreExtensions.UnitTests
             modelBuilder.Entity<Tenant>(b =>
             {
                 b.ToTable("Tenants");
-                b.HasSoftDeletionQueryFilter();
                 b.HasData(new
                 {
                     Id = 1,
@@ -47,11 +44,7 @@ namespace SW.EfCoreExtensions.UnitTests
             modelBuilder.Entity<Ticket>(b =>
             {
                 b.ToTable("Tickets");
-                b.Property(p => p.Number).HasSequenceGenerator(modelBuilder);
-                b.HasSoftDeletionQueryFilter();
-                b.HasTenantQueryFilter(() => requestContext.GetTenantId());
-                //b.HasTenantQueryFilter(requestContext);
-                b.HasTenantForeignKey<Tenant>();
+                b.Property(p => p.Number).HasSequenceGenerator();
 
                 b.HasData(new
                 {
@@ -77,9 +70,6 @@ namespace SW.EfCoreExtensions.UnitTests
             modelBuilder.Entity<MetaData>(b =>
             {
                 b.ToTable("Metadata");
-                b.HasSoftDeletionQueryFilter();
-                b.HasTenantQueryFilter(() => requestContext.GetTenantId());
-                b.HasTenantForeignKey<Tenant>();
                 b.HasData(new
                 {
                     Id = 1,
@@ -98,6 +88,14 @@ namespace SW.EfCoreExtensions.UnitTests
                     Number = 3,
                     TenantId = 2,
                 });
+            });
+
+            modelBuilder.CommonProperties(b =>
+            {
+                b.HasSoftDeletionQueryFilter();
+                b.HasTenantQueryFilter(() => requestContext.GetTenantId());
+                b.HasTenantForeignKey<Tenant>();
+                b.HasAudit();
             });
         }
     }
