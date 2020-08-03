@@ -25,13 +25,13 @@ namespace SW.EfCoreExtensions
             return entityTypeBuilder;
         }
 
-        public static EntityTypeBuilder HasTenantQueryFilter(this EntityTypeBuilder entityTypeBuilder, Expression<Func<int?>> requestContextExpression)
+        public static EntityTypeBuilder HasTenantQueryFilter(this EntityTypeBuilder entityTypeBuilder, Expression<Func<int?>> tenantIdExpression)
         {
             if (typeof(IHasTenant).IsAssignableFrom(entityTypeBuilder.Metadata.ClrType))
             {
                 var param = Expression.Parameter(typeof(IHasTenant), "TFilter");
                 var fieldNameExpression = Expression.Property(param, nameof(IHasTenant.TenantId));
-                var equalExpr = Expression.Equal(fieldNameExpression, Expression.Convert(requestContextExpression.Body, typeof(int)));
+                var equalExpr = Expression.Equal(fieldNameExpression, Expression.Convert(tenantIdExpression.Body, typeof(int)));
                 var funcExp = Expression.Lambda<Func<IHasTenant, bool>>(equalExpr, param);
                 entityTypeBuilder.AddQueryFilter(funcExp);
 
@@ -40,15 +40,13 @@ namespace SW.EfCoreExtensions
             {
                 var param = Expression.Parameter(typeof(IHasOptionalTenant), "TFilter");
                 var fieldNameExpression = Expression.Property(param, nameof(IHasOptionalTenant.TenantId));
-                var equalExpr = Expression.Equal(fieldNameExpression, requestContextExpression.Body);
+                var equalExpr = Expression.Equal(fieldNameExpression, tenantIdExpression.Body);
                 var orExp = Expression.OrElse(equalExpr, Expression.Equal(fieldNameExpression, Expression.Constant(null)));
                 var funcExp = Expression.Lambda<Func<IHasOptionalTenant, bool>>(orExp, param);
                 entityTypeBuilder.AddQueryFilter(funcExp);
             }
 
             return entityTypeBuilder;
-            //entityBuilder.AddQueryFilter<IHasTenant>(requestContextExpression);
-
         }
 
         //public static EntityTypeBuilder HasTenantQueryFilter(this EntityTypeBuilder entityTypeBuilder, RequestContext requestContext)
@@ -65,28 +63,16 @@ namespace SW.EfCoreExtensions
         public static EntityTypeBuilder HasAudit(this EntityTypeBuilder entityTypeBuilder, byte userIdLength = 100)
         {
             if (typeof(ICreationAudited).IsAssignableFrom(entityTypeBuilder.Metadata.ClrType))
-
                 entityTypeBuilder.Property<string>(nameof(ICreationAudited.CreatedBy)).IsCode(userIdLength, false, false);
 
             if (typeof(IModificationAudited).IsAssignableFrom(entityTypeBuilder.Metadata.ClrType))
-
                 entityTypeBuilder.Property<string>(nameof(IModificationAudited.ModifiedBy)).IsCode(userIdLength, false, false);
 
             if (typeof(IDeletionAudited).IsAssignableFrom(entityTypeBuilder.Metadata.ClrType))
-
                 entityTypeBuilder.Property<string>(nameof(IDeletionAudited.DeletedBy)).IsCode(userIdLength, false, false);
-
 
             return entityTypeBuilder;
         }
-
-
-
-        public static EntityTypeBuilder AddQueryFilter(this EntityTypeBuilder entityTypeBuilder, Expression<Func<object, bool>> expression)
-        {
-            return AddQueryFilter<object>(entityTypeBuilder, expression);
-        }
-
 
         public static EntityTypeBuilder AddQueryFilter<TFilter>(this EntityTypeBuilder entityTypeBuilder, Expression<Func<TFilter, bool>> expression)
         {
@@ -107,26 +93,5 @@ namespace SW.EfCoreExtensions
 
             return entityTypeBuilder;
         }
-
-        //public static EntityTypeBuilder AddQueryFilter<TEntity>(this EntityTypeBuilder entityTypeBuilder, Expression<Func<TEntity, bool>> expression) where TEntity : class
-        //{
-        //    var parameterType = Expression.Parameter(entityTypeBuilder.Metadata.ClrType);
-        //    var expressionFilter = ReplacingExpressionVisitor.Replace(
-        //        expression.Parameters.Single(), parameterType, expression.Body);
-
-        //    var currentQueryFilter = entityTypeBuilder.Metadata.GetQueryFilter();
-        //    if (currentQueryFilter != null)
-        //    {
-        //        var currentExpressionFilter = ReplacingExpressionVisitor.Replace(
-        //            currentQueryFilter.Parameters.Single(), parameterType, currentQueryFilter.Body);
-        //        expressionFilter = Expression.AndAlso(currentExpressionFilter, expressionFilter);
-        //    }
-
-        //    var lambdaExpression = Expression.Lambda(expressionFilter, parameterType);
-        //    entityTypeBuilder.HasQueryFilter(lambdaExpression);
-
-        //    return entityTypeBuilder;
-        //}
-
     }
 }

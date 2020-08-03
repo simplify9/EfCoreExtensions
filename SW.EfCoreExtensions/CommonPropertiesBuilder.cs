@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Text;
 
 namespace SW.EfCoreExtensions
@@ -20,29 +21,14 @@ namespace SW.EfCoreExtensions
             entityTypes = modelBuilder.Model.GetEntityTypes();
         }
 
-        public CommonPropertiesBuilder HasAuditFeatures(byte userIdLength = 100)
+        public CommonPropertiesBuilder HasAudit(byte userIdLength = 100)
         {
             foreach (var mutableEntityType in entityTypes)
             {
-                var type = mutableEntityType.ClrType;
-
-                if (typeof(ICreationAudited).IsAssignableFrom(type))
-                    modelBuilder.Entity(type, b =>
-                    {
-                        b.Property<string>(nameof(ICreationAudited.CreatedBy)).IsCode(userIdLength, false, false);
-                    });
-
-                if (typeof(IModificationAudited).IsAssignableFrom(type))
-                    modelBuilder.Entity(type, b =>
-                    {
-                        b.Property<string>(nameof(IModificationAudited.ModifiedBy)).IsCode(userIdLength, false, false);
-                    });
-
-                if (typeof(IDeletionAudited).IsAssignableFrom(type))
-                    modelBuilder.Entity(type, b =>
-                    {
-                        b.Property<string>(nameof(IDeletionAudited.DeletedBy)).IsCode(userIdLength, false, false);
-                    });
+                modelBuilder.Entity(mutableEntityType.ClrType, b =>
+                {
+                    b.HasAudit(userIdLength);
+                });
             }
 
             return this;
@@ -51,6 +37,13 @@ namespace SW.EfCoreExtensions
 
         public CommonPropertiesBuilder HasSoftDeletionQueryFilter()
         {
+            foreach (var mutableEntityType in entityTypes)
+            {
+                modelBuilder.Entity(mutableEntityType.ClrType, b =>
+                {
+                    b.HasSoftDeletionQueryFilter();
+                });
+            }
             return this;
         }
 
@@ -58,13 +51,23 @@ namespace SW.EfCoreExtensions
         {
             foreach (var mutableEntityType in entityTypes)
             {
-                var type = mutableEntityType.ClrType;
+                modelBuilder.Entity(mutableEntityType.ClrType, b =>
+                {
+                    b.HasTenantForeignKey<TTenant>();
+                });
             }
             return this;
         }
 
-        public CommonPropertiesBuilder HasTenantQueryFilter(RequestContext requestContext)
+        public CommonPropertiesBuilder HasTenantQueryFilter(Expression<Func<int?>> tenantIdExpression)
         {
+            foreach (var mutableEntityType in entityTypes)
+            {
+                modelBuilder.Entity(mutableEntityType.ClrType, b =>
+                {
+                    b.HasTenantQueryFilter(tenantIdExpression);
+                });
+            }
             return this;
         }
 
