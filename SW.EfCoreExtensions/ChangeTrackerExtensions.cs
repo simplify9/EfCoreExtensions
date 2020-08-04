@@ -12,7 +12,7 @@ namespace SW.EfCoreExtensions
 {
     public static class ChangeTrackerExtensions
     {
-        public static void ApplyAuditValues(this ChangeTracker changeTracker, string userId)
+        public static void ApplySoftDeletion(this ChangeTracker changeTracker, string userId)
         {
             changeTracker.DetectChanges();
 
@@ -31,6 +31,18 @@ namespace SW.EfCoreExtensions
                     if (entry.Entity is IDeletionAudited)
                         TrySetProperty(entry.Entity, nameof(IDeletionAudited.DeletedBy), userId);
                 }
+
+            }
+        }
+
+        public static void ApplyAuditValues(this ChangeTracker changeTracker, string userId)
+        {
+            changeTracker.DetectChanges();
+
+            var timestamp = DateTime.UtcNow;
+
+            foreach (var entry in changeTracker.Entries())
+            {
 
                 if (entry.Entity is IHasCreationTime && entry.State == EntityState.Added)
                     TrySetProperty(entry.Entity, nameof(IHasCreationTime.CreatedOn), timestamp);
