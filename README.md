@@ -8,7 +8,7 @@
 |```SimplyWorks.EfCoreExtensions```| ![Nuget](https://img.shields.io/nuget/v/SimplyWorks.EfCoreExtensions?style=for-the-badge)
 
 ## Introduction  
-*EfCoreExtensions* is Simplify9's master list of EfCore-compatible extensions, made in mind to abstract tasks and enhance EntityFramework capabilities. 
+[*EfCoreExtensions*](https://www.nuget.org/packages/SimplyWorks.EfCoreExtensions/) is Simplify9's master list of EfCore-compatible extensions, made in mind to abstract tasks and enhance EntityFramework capabilities. 
 
 ## EfCoreExtensions 
 
