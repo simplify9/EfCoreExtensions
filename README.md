@@ -71,3 +71,5 @@
 
 ### RelationalDbType.cs
 
+## Getting support 👷
+If you encounter any bugs, don't hesitate to submit an [issue](https://github.com/simplify9/EfCoreExtensions/issues). We'll get back to you promptly!
