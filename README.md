@@ -30,27 +30,27 @@
 
 >`RelationalDbType`
 
-### EntityEntryExtensions.cs
+#### EntityEntryExtensions.cs
 >`SetProperties`
 
-### EntityTypeBuilderExtensions.cs
+#### EntityTypeBuilderExtensions.cs
 >`EntityTypeBuilder`
 
-### ExpressionExtensions.cs
+#### ExpressionExtensions.cs
 
-### ICollectionExtensions.cs
+#### ICollectionExtensions.cs
 >`Update<TSource>`
 
-### IHostExtensions.cs
+#### IHostExtensions.cs
 >`IHost`
 
-### IQueryableOfTExtensions.cs
+#### IQueryableOfTExtensions.cs
 >`IQueryable<TEntity>`
 
-### ModelBuilderExtensions.cs
+#### ModelBuilderExtensions.cs
 >`ModelBuilder`
 
-### OwnedNavigationBuilderExtensions.cs
+#### OwnedNavigationBuilderExtensions.cs
 >`OwnedNavigationBuilder<TOwner`
 
 >`StreetAddress> BuildStreetAddress<TOwner>`
@@ -67,9 +67,9 @@
 
 >`Audit> BuildAudit<TOwner>`
 
-### PropertyBuilderExtensions.cs
+#### PropertyBuilderExtensions.cs
 
-### RelationalDbType.cs
+#### RelationalDbType.cs
 
 ## Getting support 👷
 If you encounter any bugs, don't hesitate to submit an [issue](https://github.com/simplify9/EfCoreExtensions/issues). We'll get back to you promptly!
