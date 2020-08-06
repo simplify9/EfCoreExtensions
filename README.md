@@ -12,7 +12,7 @@
 
 ## EfCoreExtensions 
 
-### ChangeTrackerExtensions.cs
+#### ChangeTrackerExtensions.cs
 >`ApplySoftDeletion`
 
 > `ApplyAuditValues`
@@ -21,7 +21,7 @@
 
 >`DispatchDomainEvents`
 
-### DbContextExtensions.cs
+#### DbContextExtensions.cs
 >`DbContextExtensions`
 
 >`Task<List<TEntity>>`
