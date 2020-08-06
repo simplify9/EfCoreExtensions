@@ -14,14 +14,20 @@
 
 ### ChangeTrackerExtensions.cs
 >`ApplySoftDeletion`
+
 > `ApplyAuditValues`
+
 >`ApplyTenantValues`
+
 >`DispatchDomainEvents`
 
 ### DbContextExtensions.cs
 >`DbContextExtensions`
+
 >`Task<List<TEntity>>`
+
 >`List<TEntity>`
+
 >`RelationalDbType`
 
 ### EntityEntryExtensions.cs
@@ -46,12 +52,19 @@
 
 ### OwnedNavigationBuilderExtensions.cs
 >`OwnedNavigationBuilder<TOwner`
+
 >`StreetAddress> BuildStreetAddress<TOwner>`
+
 >`GeoPosition> BuildGeoPosition<TOwner>`
+
 >`Contact> BuildContact<TOwner>`
+
 >`Dimensions> BuildDimensions<TOwner>`
+
 >`Weight> BuildWeight<TOwner>`
+
 >`Money> BuildMoney<TOwner>`
+
 >`Audit> BuildAudit<TOwner>`
 
 ### PropertyBuilderExtensions.cs
