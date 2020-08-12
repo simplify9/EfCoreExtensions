@@ -1,20 +1,79 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+[![Build Status](https://dev.azure.com/simplify9/Github%20Pipelines/_apis/build/status/simplify9.EfCoreExtensions?branchName=master)](https://dev.azure.com/simplify9/Github%20Pipelines/_build/latest?definitionId=168&branchName=master) 
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+![Azure DevOps tests](https://img.shields.io/azure-devops/tests/Simplify9/Github%20Pipelines/168?style=for-the-badge)
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
+| **Package**       | **Version** |
+| :----------------:|:----------------------:|
+|```SimplyWorks.EfCoreExtensions```| ![Nuget](https://img.shields.io/nuget/v/SimplyWorks.EfCoreExtensions?style=for-the-badge)
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+## Introduction  
+[*EfCoreExtensions*](https://www.nuget.org/packages/SimplyWorks.EfCoreExtensions/) is Simplify9's master list of EfCore-compatible extensions, made in mind to abstract tasks and enhance EntityFramework capabilities. 
+
+## EfCoreExtensions 
+
+#### ChangeTrackerExtensions.cs
+>`ApplySoftDeletion`
+
+> `ApplyAuditValues`
+
+>`ApplyTenantValues`
+
+>`DispatchDomainEvents`
+
+#### DbContextExtensions.cs
+>`DbContextExtensions`
+
+>`Task<List<TEntity>>`
+
+>`List<TEntity>`
+
+>`RelationalDbType`
+
+#### EntityEntryExtensions.cs
+>`SetProperties`
+
+#### EntityTypeBuilderExtensions.cs
+>`EntityTypeBuilder`
+
+#### ExpressionExtensions.cs
+
+#### ICollectionExtensions.cs
+>`Update<TSource>`
+
+#### IHostExtensions.cs
+>`IHost`
+
+#### IQueryableOfTExtensions.cs
+>`IQueryable<TEntity>`
+
+>`SearchyCondition`
+
+#### ModelBuilderExtensions.cs
+>`ModelBuilder`
+
+#### OwnedNavigationBuilderExtensions.cs
+>`OwnedNavigationBuilder<TOwner`
+
+>`StreetAddress> BuildStreetAddress<TOwner>`
+
+>`GeoPosition> BuildGeoPosition<TOwner>`
+
+>`Contact> BuildContact<TOwner>`
+
+>`Dimensions> BuildDimensions<TOwner>`
+
+>`Weight> BuildWeight<TOwner>`
+
+>`Money> BuildMoney<TOwner>`
+
+>`Audit> BuildAudit<TOwner>`
+
+#### PropertyBuilderExtensions.cs
+
+#### RelationalDbType.cs
+
+
+
+## Getting support 👷
+If you encounter any bugs, don't hesitate to submit an [issue](https://github.com/simplify9/EfCoreExtensions/issues). We'll get back to you promptly!
