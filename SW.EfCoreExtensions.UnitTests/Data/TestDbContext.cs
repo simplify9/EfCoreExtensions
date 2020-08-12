@@ -23,21 +23,25 @@ namespace SW.EfCoreExtensions.UnitTests
             modelBuilder.Entity<Tenant>(b =>
             {
                 b.ToTable("Tenants");
+                b.Property(p => p.Logo).StoreAsJson().IsUnicode(false).IsRequired(true).HasMaxLength(1000);
                 b.HasData(new
                 {
                     Id = 1,
                     Name = "Tenant 1",
-                    Deleted = false
+                    Deleted = false,
+                    Logo = new RemoteBlob()
                 }, new
                 {
                     Id = 2,
                     Name = "Tenant 2",
-                    Deleted = false
+                    Deleted = false,
+                    Logo = new RemoteBlob()
                 }, new
                 {
                     Id = 3,
                     Name = "Tenant 3",
-                    Deleted = true
+                    Deleted = true,
+                    Logo = new RemoteBlob()
                 });
             });
 

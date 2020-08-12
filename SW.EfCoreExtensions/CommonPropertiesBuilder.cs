@@ -19,7 +19,21 @@ namespace SW.EfCoreExtensions
         public CommonPropertiesBuilder(ModelBuilder modelBuilder)
         {
             this.modelBuilder = modelBuilder;
-            entityTypes = modelBuilder.Model.GetEntityTypes().Where(e => !e.IsOwned()).ToList();
+            entityTypes = modelBuilder.Model.GetEntityTypes().Where(e => IsSubclassOfRawGeneric(typeof(BaseEntity<>), e.ClrType) && !e.IsOwned()).ToList();
+        }
+
+        static bool IsSubclassOfRawGeneric(Type generic, Type toCheck)
+        {
+            while (toCheck != null && toCheck != typeof(object))
+            {
+                var cur = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                if (generic == cur)
+                {
+                    return true;
+                }
+                toCheck = toCheck.BaseType;
+            }
+            return false;
         }
 
         public CommonPropertiesBuilder HasAudit(byte userIdLength = 100)
@@ -34,7 +48,7 @@ namespace SW.EfCoreExtensions
         {
             foreach (var mutableEntityType in entityTypes)
                 modelBuilder.Entity(mutableEntityType.ClrType, b => b.HasSoftDeletionQueryFilter());
-            
+
             return this;
         }
 
@@ -42,7 +56,7 @@ namespace SW.EfCoreExtensions
         {
             foreach (var mutableEntityType in entityTypes)
                 modelBuilder.Entity(mutableEntityType.ClrType, b => b.HasTenantForeignKey<TTenant>());
-            
+
             return this;
         }
 
@@ -50,7 +64,7 @@ namespace SW.EfCoreExtensions
         {
             foreach (var mutableEntityType in entityTypes)
                 modelBuilder.Entity(mutableEntityType.ClrType, b => b.HasTenantQueryFilter(tenantIdExpression));
-            
+
             return this;
         }
 

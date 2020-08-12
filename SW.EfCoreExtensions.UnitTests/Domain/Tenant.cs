@@ -8,6 +8,7 @@ namespace SW.EfCoreExtensions.UnitTests.Domain
     class Tenant : BaseEntity, ISoftDelete
     {
         public string Name { get; set; }
+        public RemoteBlob Logo { get; set; }
         public bool Deleted { get; private set; }
     }
 }

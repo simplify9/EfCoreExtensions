@@ -49,17 +49,6 @@ namespace SW.EfCoreExtensions
             return entityTypeBuilder;
         }
 
-        //public static EntityTypeBuilder HasTenantQueryFilter(this EntityTypeBuilder entityTypeBuilder, RequestContext requestContext)
-        //{
-        //    //bool tenantIdNullable = Nullable.GetUnderlyingType(entityType.GetProperty("TenantId").PropertyType) != null;
-        //    if (typeof(IHasOptionalTenant).IsAssignableFrom(entityTypeBuilder.Metadata.ClrType))
-        //        entityTypeBuilder.AddQueryFilter<IHasOptionalTenant>(item => item.TenantId == requestContext.GetTenantId() || item.TenantId == null);
-        //    else if (typeof(IHasTenant).IsAssignableFrom(entityTypeBuilder.Metadata.ClrType))
-        //        entityTypeBuilder.AddQueryFilter<IHasTenant>(item => item.TenantId == requestContext.GetTenantId().Value);
-
-        //    return entityTypeBuilder;
-        //}
-
         public static EntityTypeBuilder HasAudit(this EntityTypeBuilder entityTypeBuilder, byte userIdLength = 100)
         {
             if (typeof(ICreationAudited).IsAssignableFrom(entityTypeBuilder.Metadata.ClrType))
