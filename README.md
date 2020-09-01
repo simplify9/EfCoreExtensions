@@ -73,6 +73,14 @@
 
 #### RelationalDbType.cs
 
+#### [Searchy](https://github.com/simplify9/Searchy)
+>`Search<TEntity>`
+
+>`SearchyCondition`
+
+>`SearchyFilter`
+
+>`SearchySort`
 
 
 ## Getting support 👷
