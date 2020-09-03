@@ -33,7 +33,7 @@ namespace SW.EfCoreExtensions.UnitTests
                         new Claim(ClaimTypes.Name, "Adam"),
                         new Claim("TenantId", "1"),
                         new Claim("UserId", "1")
-                    }));
+                    }, "MockAuth"));
                 var requestContext = new RequestContext();
                 requestContext.Set(user);
                 return requestContext; 
