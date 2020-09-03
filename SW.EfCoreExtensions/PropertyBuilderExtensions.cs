@@ -38,6 +38,12 @@ namespace SW.EfCoreExtensions
             return builder;
         }
 
+        public static PropertyBuilder<decimal?> IsDecimal_11_8(this PropertyBuilder<decimal?> builder)
+        {
+            builder.HasColumnType("decimal(11,8)");//IsUnicode(false).IsRequired(Required).IsFixedLength(FixedLength).HasMaxLength(Length);
+            return builder;
+        }
+
         public static PropertyBuilder<decimal> IsDecimal_16_6(this PropertyBuilder<decimal> builder)
         {
             builder.HasColumnType("decimal(16,6)");//IsUnicode(false).IsRequired(Required).IsFixedLength(FixedLength).HasMaxLength(Length);

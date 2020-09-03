@@ -24,8 +24,8 @@ namespace SW.EfCoreExtensions
         public static OwnedNavigationBuilder<TOwner, GeoPosition> BuildGeoPosition<TOwner>(this OwnedNavigationBuilder<TOwner, GeoPosition> builder, string prefix = null)
             where TOwner : class
         {
-            builder.Property(p => p.Latitude).HasColumnName($"{prefix}Latitude").IsDecimal_10_8();
-            builder.Property(p => p.Longitude).HasColumnName($"{prefix}Longitude").IsDecimal_10_8();
+            builder.Property(p => p.Latitude).HasColumnName($"{prefix}Latitude").IsDecimal_11_8();
+            builder.Property(p => p.Longitude).HasColumnName($"{prefix}Longitude").IsDecimal_11_8();
 
             return builder;
         }
