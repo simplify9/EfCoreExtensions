@@ -81,7 +81,7 @@ namespace SW.EfCoreExtensions
 
         async public static Task DispatchDomainEvents(this ChangeTracker changeTracker, IDomainEventDispatcher domainEventDispatcher)
         {
-            var entitiesWithEvents = changeTracker.Entries<BaseEntity>()
+            var entitiesWithEvents = changeTracker.Entries<IGeneratesDomainEvents>()
                 .Select(e => e.Entity)
                 .Where(e => e.Events.Any())
                 .ToArray();
