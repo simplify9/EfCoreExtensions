@@ -127,11 +127,11 @@ namespace SW.EfCoreExtensions.UnitTests
                 .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
             Assert.IsNull(insertedNull.IntegerArray);
             
-            var commandInsertManually = $"INSERT INTO SomeData ({nameof(inserted.IntegerArray)}) VALUES ('7,8,9')";
+            var commandInsertManually = $"INSERT INTO SomeData ({nameof(inserted.IntegerArray)}) VALUES ('10,11,12')";
             await dbContext.Database.ExecuteSqlRawAsync(commandInsertManually);
             var insertedManually = await dbContext.Set<SomeData>()
                 .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
-            Assert.IsTrue(insertedManually.IntegerArray.SequenceEqual(new[]{ 7,8,9 }));
+            Assert.IsTrue(insertedManually.IntegerArray.SequenceEqual(new[]{ 10,11,12 }));
 
             
         }
