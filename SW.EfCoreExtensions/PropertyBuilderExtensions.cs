@@ -116,6 +116,25 @@ namespace SW.EfCoreExtensions
             return builder;
         }
 
+        public static PropertyBuilder<TimeSpan> IsTimeSpan(this PropertyBuilder<TimeSpan> builder)
+        {
+            ValueConverter<TimeSpan, double> converter = new ValueConverter<TimeSpan, double>(
+                v => v.TotalSeconds,
+                v => TimeSpan.FromSeconds(v));
+
+            //ValueComparer<TimeSpan> comparer = new ValueComparer<TimeSpan>(
+            //    (l, r) => JsonConvert.SerializeObject(l) == JsonConvert.SerializeObject(r),
+            //    v => v == null ? 0 : JsonConvert.SerializeObject(v).GetHashCode(),
+            //    v => JsonConvert.DeserializeObject<TProperty>(JsonConvert.SerializeObject(v)));
+
+            builder.HasConversion(converter);
+            //builder.Metadata.SetValueConverter(converter);
+            //builder.Metadata.SetValueComparer(comparer);
+
+            return builder;
+        }
+
+
         public static PropertyBuilder<TProperty> HasSequenceGenerator<TProperty>(this PropertyBuilder<TProperty> builder, int seed = 1, int increment = 1)
         {
             builder.ValueGeneratedOnAdd().HasValueGenerator<SequenceValueGenerator>();

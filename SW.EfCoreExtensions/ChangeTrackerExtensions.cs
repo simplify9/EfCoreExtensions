@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Newtonsoft.Json;
 using SW.PrimitiveTypes;
 using System;
 using System.Collections.Generic;
@@ -93,6 +94,24 @@ namespace SW.EfCoreExtensions
                 foreach (var domainEvent in events)
                 {
                     await domainEventDispatcher.Dispatch(domainEvent);
+                }
+            }
+        }
+
+        async public static Task PublishDomainEvents(this ChangeTracker changeTracker, IPublish publish)
+        {
+            var entitiesWithEvents = changeTracker.Entries<IGeneratesDomainEvents>()
+                .Select(e => e.Entity)
+                .Where(e => e.Events.Any())
+                .ToArray();
+
+            foreach (var entity in entitiesWithEvents)
+            {
+                var events = entity.Events.ToArray();
+                entity.Events.Clear();
+                foreach (var domainEvent in events)
+                {
+                    await publish.Publish(domainEvent.GetType().Name, JsonConvert.SerializeObject(domainEvent));
                 }
             }
         }
