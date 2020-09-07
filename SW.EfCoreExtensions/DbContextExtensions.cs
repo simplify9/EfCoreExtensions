@@ -20,21 +20,16 @@ namespace SW.EfCoreExtensions
             var query = dbContext.Set<TEntity>().AsQueryable();
             if (spec != null)
                 query = query.Where(spec.Criteria);
-
             return await query.ToListAsync();
         }
 
-        //public static List<TEntity> List<TEntity>(this DbContext dbContext, ISpecification<TEntity> spec = null) where TEntity : class
-        //{
-        //    var query = dbContext.Set<TEntity>().AsQueryable();
-
-        //    if (spec != null)
-        //    {
-        //        query = query.Where(spec.Criteria);
-        //    }
-
-        //    return query.ToList();
-        //}
+        public static List<TEntity> List<TEntity>(this DbContext dbContext, ISpecification<TEntity> spec = null) where TEntity : class
+        {
+            var query = dbContext.Set<TEntity>().AsQueryable();
+            if (spec != null)
+                query = query.Where(spec.Criteria);
+            return query.ToList();
+        }
 
         public static RelationalDbType GetDbType(this DbContext dbContext)
         {
