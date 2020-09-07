@@ -94,6 +94,26 @@ namespace SW.EfCoreExtensions.UnitTests
                 });
             });
 
+
+            modelBuilder.Entity<SomeData>(b =>
+            {
+                b.ToTable("SomeData");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.StringArray).IsSeparatorDelimited(',');
+                b.Property(x => x.IntegerArray).IsSeparatorDelimited(',');
+
+                b.HasData(new
+                {
+                    Id = 1,
+                    StringArray = new string[] { "a", "b" , "c" },
+                    IntegerArray = new int[] {1,2,3}
+                },new
+                {
+                    Id = 2,
+                    StringArray = new string[] { "d", "e" , "f" },
+                    IntegerArray = new int[] {4,5,6}
+                });
+            });
             modelBuilder.CommonProperties(b =>
             {
                 b.HasSoftDeletionQueryFilter();

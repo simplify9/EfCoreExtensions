@@ -66,7 +66,14 @@ namespace SW.EfCoreExtensions
                 ? new int[] { }
                 : str.Split(separator, StringSplitOptions.RemoveEmptyEntries).Select(e => int.Parse(e)).ToArray());
 
+            ValueComparer<int[]> comparer = new ValueComparer<int[]>(
+                (l, r) => l.SequenceEqual(r),
+                v => v.Aggregate(0, (a, b) => HashCode.Combine(a, b.GetHashCode())),
+                v => v.ToArray());
+
+            
             builder.HasConversion(c);
+            builder.Metadata.SetValueComparer(comparer);
             return builder;
         }
 
@@ -80,21 +87,33 @@ namespace SW.EfCoreExtensions
                 ? new string[] { }
                 : str.Split(separator, StringSplitOptions.RemoveEmptyEntries));
 
+            ValueComparer<string[]> comparer = new ValueComparer<string[]>(
+                (l, r) => l.SequenceEqual(r),
+                v => v.Aggregate(0, (a, b) => HashCode.Combine(a, b.GetHashCode())),
+                v => v.ToArray());
+            
             builder.HasConversion(c);
+            builder.Metadata.SetValueComparer(comparer);
             return builder;
         }
 
         public static PropertyBuilder<Type> IsClrType(this PropertyBuilder<Type> builder)
         {
 
-            ValueConverter<Type, string> _clrTypeConverter = new ValueConverter<Type, string>(
+            ValueConverter<Type, string> clrTypeConverter = new ValueConverter<Type, string>(
                 type => type == null
                     ? null
                     : type.AssemblyQualifiedName,
                 str => str == null
                     ? null
                     : Type.GetType(str));
-            builder.HasConversion(_clrTypeConverter);
+            ValueComparer<Type> comparer = new ValueComparer<Type>(
+                (l, r) => l == r,
+                v => v.GetHashCode(),
+                v => v);
+
+            builder.HasConversion(clrTypeConverter);
+            builder.Metadata.SetValueComparer(comparer);
             return builder;
         }
 
