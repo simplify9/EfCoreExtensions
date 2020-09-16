@@ -13,20 +13,7 @@ namespace SW.EfCoreExtensions
 {
     public static class DatabaseFacadeExtensions
     {
-        private static string IdentityCommand => "SELECT LAST_INSERT_ID();";
-
-        private static string Column(KeyValuePair<string, SqlTypeInformation> map)
-        {
-            string tmp = string.Empty;
-
-            //TODO : implement provider specific UNIQUE implementation
-            if (map.Value.IsUnique)
-                tmp += string.Empty;
-
-            tmp += $"\t{map.Key}\t{map.Value.SqlType},\n";
-
-            return tmp;
-        }
+        private static string identityCommand = "SELECT LAST_INSERT_ID();";
 
         /// <summary>
         /// Creates table on connection object and returns the create statement used
@@ -67,7 +54,6 @@ namespace SW.EfCoreExtensions
         {
             var entityType = typeof(TEntity);
             var properties = entityType.GetProperties();
-            PropertyInfo idProperty = null;
             var fields = new StringBuilder();
             var parameters = new StringBuilder();
             var command = databaseFacade.GetDbConnection().CreateCommandObject(transaction);
@@ -75,6 +61,7 @@ namespace SW.EfCoreExtensions
             foreach (PropertyInfo property in properties)
             {
                 bool isIdentity = property.Name.Equals(identity, StringComparison.OrdinalIgnoreCase);
+                //PropertyInfo idProperty;
                 if (!isIdentity || !serverSideIdentity)
                 {
                     var columnEscaped = ColumnAttribute.Get(property).ColumnNameEscaped(databaseFacade.GetDbType());
@@ -86,16 +73,14 @@ namespace SW.EfCoreExtensions
 
                     command.AddParameter(paramaterName, property.GetValue(entity));
                 }
-                else
-                    idProperty = property;
+                //else
+                    //idProperty = property;
             }
 
-            string insertStatement = @$"INSERT INTO {tableName} 
+            command.CommandText = @$"INSERT INTO {tableName} 
                 ({fields.ToString().Remove(fields.ToString().Length - 2)}) 
                 VALUES ({parameters.ToString().Remove(parameters.ToString().Length - 2)}) 
-                {(serverSideIdentity && databaseFacade.GetDbType() != RelationalDbType.Sqlite ? ";" + IdentityCommand : "")}";
-
-            command.CommandText = insertStatement;
+                {(serverSideIdentity && databaseFacade.GetDbType() != RelationalDbType.Sqlite ? ";" + identityCommand : "")}";
 
             if (serverSideIdentity)
             {
@@ -116,7 +101,6 @@ namespace SW.EfCoreExtensions
         {
             var entityType = typeof(TEntity);
             var properties = entityType.GetProperties();
-
             var idColumn = string.Empty;
             var idColumnParameter = string.Empty;
             var fields = new StringBuilder();
@@ -142,9 +126,7 @@ namespace SW.EfCoreExtensions
                 command.AddParameter(parameterName, property.GetValue(entity));
             }
 
-            string updateStatement = $"UPDATE {tableName} SET {fields.ToString().Remove(fields.ToString().Length - 2)} WHERE {idColumn}={idColumnParameter}";
-            command.CommandText = updateStatement;
-
+            command.CommandText = $"UPDATE {tableName} SET {fields.ToString().Remove(fields.ToString().Length - 2)} WHERE {idColumn}={idColumnParameter}";
             return await databaseFacade.ExecuteNonQueryAsync(command);
         }
         async public static Task<int> Update<TEntity>(this DatabaseFacade databaseFacade, TEntity entity, DbTransaction transaction = null)
@@ -158,11 +140,7 @@ namespace SW.EfCoreExtensions
         {
             var command = databaseFacade.GetDbConnection().CreateCommandObject(transaction);
             string where = command.FilterCondition<TEntity>(databaseFacade.GetDbType(), conditions);
-
-            var deleteStatement = $"delete FROM {tableName} {where} ";
-
-            command.CommandText = deleteStatement;
-
+            command.CommandText = $"delete FROM {tableName} {where} ";
             return await databaseFacade.ExecuteNonQueryAsync(command);
         }
         async static public Task<int> Delete<TEntity>(this DatabaseFacade databaseFacade, IEnumerable<SearchyCondition> conditions = null, DbTransaction transaction = null) where TEntity : new()
@@ -180,12 +158,8 @@ namespace SW.EfCoreExtensions
         {
             var command = databaseFacade.GetDbConnection().CreateCommandObject();
             string where = command.FilterCondition<TEntity>(databaseFacade.GetDbType(), conditions);
-            string selectStatement = $"SELECT COUNT(*) FROM {tableName} {where}";
-
-            command.CommandText = selectStatement;
-
+            command.CommandText = $"SELECT COUNT(*) FROM {tableName} {where}";
             var result = await databaseFacade.ExecuteScalarAsync(command);
-
             return Convert.ToInt32(result);
         }
 
@@ -197,9 +171,8 @@ namespace SW.EfCoreExtensions
         async public static Task<TEntity> One<TEntity>(this DatabaseFacade databaseFacade, string tableName, object key) where TEntity : new()
         {
             var identityColumn = TableAttribute.Get<TEntity>().IdentityColumn;
-            string selectStatement = $"{BuildSelect<TEntity>(databaseFacade.GetDbType(), tableName)} WHERE {identityColumn}=@{identityColumn}";
             var command = databaseFacade.GetDbConnection().CreateCommandObject();
-            command.CommandText = selectStatement;
+            command.CommandText = $"{BuildSelect<TEntity>(databaseFacade.GetDbType(), tableName)} WHERE {identityColumn}=@{identityColumn}"; ;
             command.AddParameter(identityColumn, key);
             return (await databaseFacade.ExecuteAndBindReaderAsync<TEntity>(command)).SingleOrDefault();
         }
@@ -214,13 +187,10 @@ namespace SW.EfCoreExtensions
         }
         async static public Task<IEnumerable<TEntity>> All<TEntity>(this DatabaseFacade databaseFacade, string tableName, IEnumerable<SearchyCondition> conditions = null, IEnumerable<SearchySort> sorts = null, int pageSize = 0, int pageIndex = 0) where TEntity : new()
         {
-            var entityType = typeof(TEntity);
             var relationalDbType = databaseFacade.GetDbType();
             var command = databaseFacade.GetDbConnection().CreateCommandObject();
-            string where = "";
             string orderBy = "";
-
-            where = command.FilterCondition<TEntity>(relationalDbType, conditions);
+            string where = command.FilterCondition<TEntity>(relationalDbType, conditions);
 
             if (sorts?.Count() > 0)
             {
@@ -243,8 +213,7 @@ namespace SW.EfCoreExtensions
         }
         async static public Task<IEnumerable<TEntity>> All<TEntity>(this DatabaseFacade databaseFacade, IEnumerable<SearchyCondition> conditions = null, IEnumerable<SearchySort> sorts = null, int pageSize = 0, int pageIndex = 0) where TEntity : new()
         {
-            Type entityType = typeof(TEntity);
-            string tableName = TableAttribute.Get(entityType).TableName;
+            string tableName = TableAttribute.Get<TEntity>().TableName;
             return await databaseFacade.All<TEntity>(tableName, conditions, sorts, pageSize, pageIndex);
         }
         async public static Task<IEnumerable<TEntity>> All<TEntity>(this DatabaseFacade databaseFacade, string queryText) where TEntity : new()
@@ -261,6 +230,31 @@ namespace SW.EfCoreExtensions
         {
             return databaseFacade.All<TEntity>(tableName, new SearchyCondition[] { new SearchyCondition(field, rule, value) });
         }
+
+        public static RelationalDbType GetDbType(this DatabaseFacade databaseFacade)
+        {
+            switch (databaseFacade.ProviderName.ToLower())
+            {
+                case "microsoft.entityframeworkcore.sqlserver":
+                    return RelationalDbType.MsSql;
+
+                case "pomelo.entityframeworkcore.mysql":
+                    return RelationalDbType.MySql;
+
+                case "microsoft.entityframeworkcore.sqlite":
+                    return RelationalDbType.Sqlite;
+
+                case "mpgsql.entityframeworkcore.postgresql":
+                    return RelationalDbType.Postgre;
+
+                case "oracle.entityframeworkcore":
+                    return RelationalDbType.Oracle;
+
+                default:
+                    return RelationalDbType.Unknown;
+            }
+        }
+
 
         async private static Task<IEnumerable<TEntity>> ExecuteAndBindReaderAsync<TEntity>(this DatabaseFacade databaseFacade, DbCommand command) where TEntity : new()
         {
@@ -288,7 +282,6 @@ namespace SW.EfCoreExtensions
                 await databaseFacade.CloseConnectionAsync();
             }
         }
-
         async private static Task<object> ExecuteScalarAsync(this DatabaseFacade databaseFacade, DbCommand command)
         {
             await databaseFacade.OpenConnectionAsync();
@@ -312,7 +305,6 @@ namespace SW.EfCoreExtensions
 
             return $"SELECT {fields.Remove(fields.Length - 1)} FROM {tableName} ";
         }
-
         private static string AddSqlLimit(RelationalDbType relationalDbType, string sqlStatement, int pageSize, int paging = 0)
         {
             if (relationalDbType == RelationalDbType.MySql || relationalDbType == RelationalDbType.Sqlite)
@@ -321,29 +313,17 @@ namespace SW.EfCoreExtensions
                 sqlStatement = sqlStatement.Insert(7, $"TOP ({pageSize}) ");
             return sqlStatement;
         }
-
-        public static RelationalDbType GetDbType(this DatabaseFacade databaseFacade)
+        private static string Column(KeyValuePair<string, SqlTypeInformation> map)
         {
-            switch (databaseFacade.ProviderName.ToLower())
-            {
-                case "microsoft.entityframeworkcore.sqlserver":
-                    return RelationalDbType.MsSql;
+            string tmp = string.Empty;
 
-                case "pomelo.entityframeworkcore.mysql":
-                    return RelationalDbType.MySql;
+            //TODO : implement provider specific UNIQUE implementation
+            if (map.Value.IsUnique)
+                tmp += string.Empty;
 
-                case "microsoft.entityframeworkcore.sqlite":
-                    return RelationalDbType.Sqlite;
+            tmp += $"\t{map.Key}\t{map.Value.SqlType},\n";
 
-                case "mpgsql.entityframeworkcore.postgresql":
-                    return RelationalDbType.Postgre;
-
-                case "oracle.entityframeworkcore":
-                    return RelationalDbType.Oracle;
-
-                default:
-                    return RelationalDbType.Unknown;
-            }
+            return tmp;
         }
 
     }
