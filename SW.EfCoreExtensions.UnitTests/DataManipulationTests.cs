@@ -119,7 +119,7 @@ namespace SW.EfCoreExtensions.UnitTests
 
             var updatedRecord = await facade.One<Bag>("Bags", 10);
             
-            if(!facade.IsSqlite())
+            if(facade.GetDbType() == RelationalDbType.Sqlite )
                 Assert.AreEqual(updatedRecord.Closed,false);
         }
     }
