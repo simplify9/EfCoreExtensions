@@ -15,7 +15,7 @@ using SW.PrimitiveTypes;
 namespace SW.EfCoreExtensions.UnitTests
 {
     [TestClass]
-    public class DataInsertionTests
+    public class DataManipulationTests
     {
 
         //private DatabaseFacade facade;
@@ -110,7 +110,7 @@ namespace SW.EfCoreExtensions.UnitTests
                 Description = "500",
                 Closed = true
             };
-            await facade.Add("Bags", bag);
+            await facade.Add("Bags", bag, "Id", false);
             await facade.Update("Bags", new Bag
             {
                 Id = 10,
@@ -119,8 +119,7 @@ namespace SW.EfCoreExtensions.UnitTests
 
             var updatedRecord = await facade.One<Bag>("Bags", 10);
             
-            if(facade.GetDbType() == RelationalDbType.Sqlite )
-                Assert.AreEqual(updatedRecord.Closed,false);
+            Assert.AreEqual(updatedRecord.Closed,false);
         }
     }
 }

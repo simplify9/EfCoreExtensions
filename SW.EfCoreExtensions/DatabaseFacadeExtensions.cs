@@ -113,12 +113,12 @@ namespace SW.EfCoreExtensions
                 if (!isIdentity)
                 {
                     string column = ColumnAttribute.Get(property).ColumnNameEscaped(databaseFacade.GetDbType());
-                    fields.Append(column + "= " + parameterName + ", ");
+                    fields.Append(column + "= @" + parameterName + ", ");
 
                 }
                 else
                 {
-                    idColumnParameter = parameterName;
+                    idColumnParameter = '@' + parameterName;
                     idColumn = ColumnAttribute.Get(property).ColumnNameEscaped(databaseFacade.GetDbType());
 
                 }
