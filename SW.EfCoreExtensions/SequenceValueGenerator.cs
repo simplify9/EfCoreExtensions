@@ -18,7 +18,7 @@ namespace SW.EfCoreExtensions
             var sequenceName = entry.Entity.GetType().Name;
             using var command = entry.Context.Database.GetDbConnection().CreateCommand();
 
-            switch (entry.Context.GetDbType())
+            switch (entry.Context.Database.GetDbType())
             {
                 case RelationalDbType.MySql:
                     command.CommandText = $"UPDATE Sequences SET Value=LAST_INSERT_ID(Value) + 1 WHERE Entity = '{sequenceName}';SELECT LAST_INSERT_ID();";

@@ -95,6 +95,21 @@ namespace SW.EfCoreExtensions.UnitTests
             });
 
 
+            modelBuilder.Entity<Employee>(b =>
+            {
+                b.ToTable("Employees");
+                b.HasKey(e => e.Id);
+                b.OwnsOne(e => e.Photo);
+                b.OwnsMany(e => e.Leaves);
+                b.OwnsOne(e => e.Salary);
+            });
+
+            modelBuilder.Entity<Bag>(b =>
+            {
+                b.ToTable("Bags");
+                b.HasKey(e => e.Id);
+            });
+
             modelBuilder.Entity<SomeData>(b =>
             {
                 b.ToTable("SomeData");

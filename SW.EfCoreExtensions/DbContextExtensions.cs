@@ -30,29 +30,5 @@ namespace SW.EfCoreExtensions
                 query = query.Where(spec.Criteria);
             return query.ToList();
         }
-
-        public static RelationalDbType GetDbType(this DbContext dbContext)
-        {
-            switch (dbContext.Database.ProviderName.ToLower())
-            {
-                case "microsoft.entityframeworkcore.sqlserver":
-                    return RelationalDbType.MsSql;
-
-                case "pomelo.entityframeworkcore.mysql":
-                    return RelationalDbType.MySql;
-
-                case "microsoft.entityframeworkcore.sqlite":
-                    return RelationalDbType.Sqlite;
-
-                case "mpgsql.entityframeworkcore.postgresql":
-                    return RelationalDbType.Postgre;
-
-                case "oracle.entityframeworkcore":
-                    return RelationalDbType.Oracle;
-
-                default:
-                    return RelationalDbType.Unknown;
-            }
-        }
     }
 }
