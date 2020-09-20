@@ -19,7 +19,7 @@ namespace SW.EfCoreExtensions
             {
                 Expression conditionExpression = null;
 
-                foreach (var searchyFilter in searchyCondition.Filters)
+                foreach (var searchyFilter in searchyCondition.Filters.Where(f => f.Field != null && f.Rule != default  && f.Value != null))
                 {
                     var filterExpression = parameter.BuildFilterExpression<TEntity>(searchyFilter);
 
@@ -41,11 +41,6 @@ namespace SW.EfCoreExtensions
 
         static Expression BuildFilterExpression<TEntity>(this Expression parameter, ISearchyFilter filter)
         {
-            //Expression fieldNameExpression = null;
-            //Type fieldType = null;
-
-            //if (filter.Field.Contains("."))
-            //{
             var fieldSegments = filter.Field.Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             var fieldNameExpression = parameter;
             var fieldType = typeof(TEntity);
@@ -55,12 +50,6 @@ namespace SW.EfCoreExtensions
                 fieldNameExpression = Expression.Property(fieldNameExpression, fieldSegment);
                 fieldType = fieldType.GetProperty(fieldSegment, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance).PropertyType;
             }
-            //}
-            //else
-            //{
-            //    fieldNameExpression = Expression.Property(parameter, filter.Field);
-            //    fieldType = typeof(TEntity).GetProperty(filter.Field, BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance).PropertyType;
-            //}
 
             switch (filter.Rule)
             {
