@@ -51,7 +51,7 @@ namespace SW.EfCoreExtensions.UnitTests
         [TestMethod]
         public void SearchyRange()
         {
-            var values = new decimal[] { 30, 40 };
+            var values = new int[] { 30, 40 };
             var sc = new SearchyCondition(new SearchyFilter
             {
                 Value = values,
