@@ -1,16 +1,33 @@
-﻿using SW.PrimitiveTypes;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using SW.PrimitiveTypes;
 
 namespace SW.EfCoreExtensions
 {
     public static class IQueryableOfTExtensions
     {
+
+        async public static Task<IDictionary<string, string>> ToDictionaryAsync<TEntity>(this IQueryable<TEntity> query, SearchyRequest searchyRequest, Func<TEntity, string> keySelector, Func<TEntity, string> valueSelector = null)
+        {
+            return await query.
+                Search(searchyRequest.Conditions).
+                ToDictionaryAsync(keySelector, valueSelector ?? keySelector);
+        }
+
+        async public static Task<SearchyResponse<TEntity>> ToSearchyResponseAsync<TEntity>(this IQueryable<TEntity> query, SearchyRequest searchyRequest)
+        {
+            return new SearchyResponse<TEntity>
+            {
+                Result = await query.Search(searchyRequest.Conditions, searchyRequest.Sorts, searchyRequest.PageSize, searchyRequest.PageIndex).ToListAsync(),
+                TotalCount = searchyRequest.CountRows ? await query.Search(searchyRequest.Conditions).CountAsync() : 0
+            };
+        }
+
         public static IQueryable<TEntity> Search<TEntity>(this IQueryable<TEntity> target, string field, object valueEquals)
         {
             return Search(target, new SearchyCondition[] { new SearchyCondition(field, SearchyRule.EqualsTo, valueEquals) });
@@ -195,8 +212,5 @@ namespace SW.EfCoreExtensions
 
             }
         }
-
-
-
     }
 }
