@@ -12,7 +12,7 @@ namespace SW.EfCoreExtensions
         public static IDbDataParameter AddParameter(this DbCommand command, string parameterName, object parameterValue = null)
         {
             IDbDataParameter parameter = command.CreateParameter();
-            
+
             parameter.Direction = ParameterDirection.Input;
             parameter.ParameterName = "@" + parameterName;
             parameter.Value = parameterValue ?? DBNull.Value;
@@ -24,23 +24,23 @@ namespace SW.EfCoreExtensions
 
         public static string FilterCondition<TEntity>(this DbCommand command, RelationalDbType relationalDbType, IEnumerable<SearchyCondition> conditions = null)
         {
-            //var entityType = typeof(TEntity);
+            if (conditions == null)
+                return string.Empty;
 
             var where = string.Empty;
-
-            if (conditions == null || conditions.Count() == 0)
-                return "";
-
             int index = 0;
+            bool validFiltersFound = false;
 
-            foreach (var condition in conditions.Where(x => x.Filters != null && x.Filters.Count != 0))
+            foreach (var condition in conditions)
             {
                 if (where == string.Empty)
                     where = " WHERE (";
                 else
                     where = $"{where} or ( ";
-                foreach (var filter in condition.Filters)
+
+                foreach (var filter in condition.Filters.Where(i => i.IsValid()))
                 {
+                    validFiltersFound = true;
                     index += 1;
                     var filterColName = ColumnAttribute.Get<TEntity>(filter.Field).ColumnNameEscaped(relationalDbType);
                     var filterColumnParameter = ColumnAttribute.Get<TEntity>(filter.Field).ColumnName;
@@ -118,7 +118,8 @@ namespace SW.EfCoreExtensions
 
                 where = $"{where})";
             }
-            return where;
+
+            return validFiltersFound ? where : string.Empty;
         }
     }
 }

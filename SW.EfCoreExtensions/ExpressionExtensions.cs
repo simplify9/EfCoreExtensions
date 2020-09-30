@@ -19,7 +19,7 @@ namespace SW.EfCoreExtensions
             {
                 Expression conditionExpression = null;
 
-                foreach (var searchyFilter in searchyCondition.Filters.Where(f => f.Field != null && f.Rule != default))
+                foreach (var searchyFilter in searchyCondition.Filters.Where(f => f.IsValid()))
                 {
                     var filterExpression = parameter.BuildFilterExpression<TEntity>(searchyFilter);
 

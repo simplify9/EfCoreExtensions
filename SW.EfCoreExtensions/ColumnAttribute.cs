@@ -26,7 +26,7 @@ namespace SW.EfCoreExtensions
         public static ColumnAttribute Get<TEntity>(string propertyName)
         {
             var property = typeof(TEntity).GetProperty(propertyName);
-            if (property == null) throw new SWException(propertyName);
+            if (property == null) throw new ArgumentOutOfRangeException(propertyName);
             return Get(property);
         }
     }
