@@ -28,7 +28,7 @@ namespace SW.EfCoreExtensions
                     command.CommandText = $"UPDATE Sequences SET Value=Value+1 WHERE Entity='{sequenceName}'; SELECT Value-1 FROM Sequences WHERE Entity='{sequenceName}';";
                     break;
 
-                case RelationalDbType.Postgre:
+                case RelationalDbType.PgSql:
                 case RelationalDbType.Oracle:
                 case RelationalDbType.MsSql:
                 default:

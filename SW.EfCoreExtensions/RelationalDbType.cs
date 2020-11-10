@@ -10,7 +10,7 @@ namespace SW.EfCoreExtensions
         MsSql = 1,
         MySql = 2,
         Sqlite = 3,
-        Postgre = 4,
+        PgSql = 4,
         Oracle = 5
     }
 }

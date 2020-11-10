@@ -74,7 +74,7 @@ namespace SW.EfCoreExtensions
                     command.AddParameter(paramaterName, property.GetValue(entity));
                 }
                 //else
-                    //idProperty = property;
+                //idProperty = property;
             }
 
             command.CommandText = @$"INSERT INTO {tableName} 
@@ -244,8 +244,9 @@ namespace SW.EfCoreExtensions
                 case "microsoft.entityframeworkcore.sqlite":
                     return RelationalDbType.Sqlite;
 
-                case "mpgsql.entityframeworkcore.postgresql":
-                    return RelationalDbType.Postgre;
+                //Npgsql.EntityFrameworkCore.PostgreSQL
+                case "npgsql.entityframeworkcore.postgresql":
+                    return RelationalDbType.PgSql;
 
                 case "oracle.entityframeworkcore":
                     return RelationalDbType.Oracle;
