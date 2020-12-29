@@ -35,10 +35,9 @@ steps:
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet pack'
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   inputs:
     command: pack
-    packagesToPack: 'SW.EfCoreExtensions/SW.EfCoreExtensions.csproj'
+    packagesToPack: 'SW.EfCoreExtensions/SW.EfCoreExtensions.csproj;SW.EfCoreExtensions.PgSql/SW.EfCoreExtensions.PgSql.csproj'
     nobuild: true
     versioningScheme: byBuildNumber
 
