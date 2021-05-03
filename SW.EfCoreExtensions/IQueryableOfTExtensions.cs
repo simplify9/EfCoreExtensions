@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using SW.PrimitiveTypes;
 
 namespace SW.EfCoreExtensions
@@ -41,6 +42,14 @@ namespace SW.EfCoreExtensions
         public static IQueryable<TEntity> Search<TEntity>(this IQueryable<TEntity> target, SearchyCondition condition)
         {
             return Search(target, new SearchyCondition[] { condition });
+        }
+        public static IQueryable<TEntity> If<TEntity, TProperty>(this IIncludableQueryable<TEntity, TProperty> source, bool condition, Func<IIncludableQueryable<TEntity, TProperty>, IQueryable<TEntity>> transform) where TEntity : class
+        {
+            return condition ? transform(source) : source;
+        }
+        public static IQueryable<TEntity> If<TEntity>(this IQueryable<TEntity> source, bool condition, Func<IQueryable<TEntity>, IQueryable<TEntity>> transform)
+        {
+            return condition ? transform(source) : source;
         }
 
         public static IQueryable<TEntity> Search<TEntity>(this IQueryable<TEntity> target,
@@ -211,6 +220,10 @@ namespace SW.EfCoreExtensions
                     throw new SWException("Unsupported sort datatype: " + type.ToString());
 
             }
+
+          
+
+         
         }
     }
 }

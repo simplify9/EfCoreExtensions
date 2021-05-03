@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using SW.PrimitiveTypes;
+using Microsoft.EntityFrameworkCore;
 
 namespace SW.EfCoreExtensions.UnitTests
 {
@@ -121,6 +122,36 @@ namespace SW.EfCoreExtensions.UnitTests
             var data = FakeEmployees.Data.Search<Employee, Leave>("Leaves", new SearchyCondition[] { _sc1 }, new SearchySort[] { new SearchySort { Field = "Id", Sort = SearchySortOrder.DEC } },5).ToList();
 
             Assert.AreEqual(5, data.Count());
+        }
+
+        [TestMethod]
+        public void IQueryableIf()
+        {
+         
+            var emps = FakeEmployees.Data.ToList();
+            var emp = emps.First();
+            var  EmpsAppliedCond = FakeEmployees.Data.If(emp != default, q => q.Where(s => s.Id == emp.Id)).ToList();
+            Assert.AreEqual(EmpsAppliedCond.Count, 1);
+            Assert.AreEqual(EmpsAppliedCond.First().Id, emp.Id);
+
+            emp = default;
+            var EmpsDoesntApplyCond = FakeEmployees.Data.If(emp != default, q => q.Where(s => s.Id == 0)).ToList();
+            Assert.AreEqual(EmpsDoesntApplyCond.Count, emps.Count);
+        }
+
+        [TestMethod]
+        public void  IQueryableIncludableQueryableIf()
+        {
+
+            var emps = FakeEmployees.Data.ToList();
+            var emp = emps.First();
+            var empsApplyCondt = FakeEmployees.Data.If(emp != default, q => q.Include(s => s.Leaves)).ToList();
+            Assert.AreNotEqual(empsApplyCondt.First().Leaves, null);
+
+            emp = default;
+            var empsDoesntApplyCond = FakeEmployees.Data.If(emp != default, q => q.Include(s => s.Leaves)).ToList();
+            Assert.AreNotEqual(empsDoesntApplyCond.First().Leaves, null);
+
         }
 
     }
