@@ -165,11 +165,11 @@ namespace SW.EfCoreExtensions
 
             //var mutableEntityType = builder.Metadata.DeclaringEntityType.Model.FindEntityType(typeof(Sequence));
 
-            sequenceEntity.AddData(new
+            sequenceEntity.AddData(new []{new
             {
                 Entity = builder.Metadata.DeclaringEntityType.ClrType.Name,
                 Value = 1,
-            });
+            }});
 
             //modelBuilder.Entity<Sequence>(b =>
             //{
